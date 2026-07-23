@@ -20,7 +20,6 @@ export default function SearchBar() {
   const wrapperRef = useRef(null);
   const debouncedQuery = useDebounce(query, 350);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handler(e) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
@@ -31,7 +30,6 @@ export default function SearchBar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Live search as user types
   useEffect(() => {
     if (!debouncedQuery.trim()) { setResults(null); setOpen(false); return; }
     setLoading(true);
