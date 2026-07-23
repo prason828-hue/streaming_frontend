@@ -1,8 +1,5 @@
 import { API_BASE, REFRESH_TOKEN_PATH } from "./config";
 
-// ─── In-memory access token ───────────────────────────────────────────────────
-// Lives only for the page lifetime. Lost on refresh — restored via the
-// refresh token flow below. Never touches localStorage.
 let accessToken = null;
 
 export function setAccessToken(token) {
@@ -17,12 +14,6 @@ export function getAccessToken() {
   return accessToken;
 }
 
-// ─── Persisted refresh token ──────────────────────────────────────────────────
-// Stored in localStorage so it survives page refresh AND works in Chrome
-// Incognito (where cross-site SameSite=None cookies are blocked entirely).
-// Trade-off: localStorage is readable by JS, so it's vulnerable to XSS —
-// acceptable here because we're in active development. In production you'd
-// want a same-domain backend or a service worker that intercepts the token.
 const REFRESH_TOKEN_KEY = "rt";
 
 export function setRefreshToken(token) {
@@ -39,16 +30,6 @@ export function clearRefreshToken() {
   localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
 
-// ─── Core request wrapper ─────────────────────────────────────────────────────
-
-/**
- * Wraps fetch with:
- * - Authorization: Bearer <accessToken> header (in-memory)
- * - JSON / FormData content-type handling
- * - ngrok interstitial bypass header
- * - Silent 401 recovery: sends the stored refresh token in the request body
- *   to /api/auth/refresh-token, then retries the original request once
- */
 async function request(path, options = {}, isRetry = false) {
   const isFormData = options.body instanceof FormData;
   const isAuthEndpoint =
@@ -70,7 +51,6 @@ async function request(path, options = {}, isRetry = false) {
   if (res.status === 401 && !isRetry && !isAuthEndpoint) {
     const storedRefreshToken = getRefreshToken();
     if (!storedRefreshToken) {
-      // Nothing to refresh with — clear state and surface the 401
       clearAccessToken();
       clearRefreshToken();
     } else {
@@ -92,7 +72,6 @@ async function request(path, options = {}, isRetry = false) {
         return request(path, options, true);
       }
 
-      // Refresh failed (expired / revoked) — fully clear session
       clearAccessToken();
       clearRefreshToken();
     }
@@ -115,7 +94,7 @@ async function request(path, options = {}, isRetry = false) {
       `Request failed (${res.status})`;
     const error = new Error(message);
     error.status = res.status;
-    error.error = data?.error; // chack the error
+    error.error = data?.error;
     error.data = data;
     throw error;
   }
