@@ -28,12 +28,10 @@ function getDeepLink(notif) {
   }
 }
 
-// Single toast item — auto-dismisses after `duration` ms
 function Toast({ notif, onDismiss }) {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
 
-  // Trigger slide-in on mount
   useEffect(() => {
     const t = requestAnimationFrame(() => setVisible(true));
     return () => cancelAnimationFrame(t);
@@ -66,29 +64,23 @@ function Toast({ notif, onDismiss }) {
   );
 }
 
-// Container — listens for new WS notifications and renders toasts
 export default function NotificationToast() {
   const { notifications } = useWebSocket();
   const [toasts, setToasts] = useState([]);
   const seenIdsRef = { current: new Set() };
 
-  // Track which notification IDs we've already shown as toasts
-  // Using a module-level set so it persists across renders
   useEffect(() => {
     if (notifications.length === 0) return;
 
-    // The most recent notification is always at index 0 (prepended in WebSocketContext)
     const latest = notifications[0];
     if (!latest || shownIds.has(latest.id)) return;
 
     shownIds.add(latest.id);
     const toastEntry = { ...latest, toastId: latest.id };
-    setToasts((prev) => [toastEntry, ...prev].slice(0, 4)); // max 4 at once
+    setToasts((prev) => [toastEntry, ...prev].slice(0, 4)); 
 
-    // Auto-dismiss after 5 s
     const t = setTimeout(() => dismiss(latest.id), 5000);
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notifications]);
 
   function dismiss(id) {
@@ -106,6 +98,4 @@ export default function NotificationToast() {
   );
 }
 
-// Module-level set — persists for the page lifetime so we never
-// show the same notification toast twice even after re-renders
 const shownIds = new Set();
