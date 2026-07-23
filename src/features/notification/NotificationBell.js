@@ -15,7 +15,6 @@ export default function NotificationBell() {
   const [loading, setLoading] = useState(false);
   const panelRef = useRef(null);
 
-  // Load historical notifications when panel opens
   useEffect(() => {
     if (!open) return;
     setLoading(true);
@@ -25,7 +24,6 @@ export default function NotificationBell() {
       .finally(() => setLoading(false));
   }, [open]);
 
-  // Merge real-time WS notifications into the list
   useEffect(() => {
     if (wsNotifs.length === 0) return;
     setAllNotifs((prev) => {
@@ -35,7 +33,6 @@ export default function NotificationBell() {
     });
   }, [wsNotifs]);
 
-  // Close panel on outside click
   useEffect(() => {
     function handler(e) {
       if (panelRef.current && !panelRef.current.contains(e.target)) {
@@ -53,24 +50,9 @@ export default function NotificationBell() {
       markAllRead().catch(() => {});
     }
   }
-
-  // Deep-link routing per notification type:
-  //
-  // NEW_MESSAGE     → referenceId = senderUsername
-  //                   /messages?open={senderUsername}
-  //
-  // NEW_SUBSCRIBER  → referenceId = subscriberUsername
-  //                   /u/{subscriberUsername}
-  //
-  // NEW_COMMENT     → referenceId = videoId
-  //                   /videos/{videoId}?scrollToComments=true
-  //
-  // VIDEO_UPLOADED  → referenceId = videoId
-  //                   /videos/{videoId}?autoplay=true
   function handleNotifClick(notif) {
     setOpen(false);
 
-    // Mark this specific notification as read
     markRead(notif.id).catch(() => {});
     setAllNotifs((prev) =>
       prev.map((n) => (n.id === notif.id ? { ...n, read: true } : n))
