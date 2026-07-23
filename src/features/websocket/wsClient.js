@@ -1,11 +1,8 @@
-// Uses @stomp/stompjs with native WebSocket — no sockjs-client dependency.
-// The backend endpoint must NOT have .withSockJS() configured.
 import { Client } from "@stomp/stompjs";
 import { API_BASE } from "../../shared/config";
 
 let client = null;
 
-// Convert http(s):// → ws(s):// for the WebSocket URL
 function toWsUrl(base) {
   return base.replace(/^http/, "ws");
 }
