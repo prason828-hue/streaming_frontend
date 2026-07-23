@@ -1,4 +1,3 @@
-// Mirrors com.streaming.live.video.VideoController
 import request from "../../shared/apiClient";
 import { API_BASE } from "../../shared/config";
 
@@ -32,7 +31,6 @@ export function getVideosByUser(userId) {
   return request(`/api/videos/user/${userId}`, { method: "GET" });
 }
 
-// DELETE /api/videos/{videoId} — auth required, owner only
 export function deleteVideo(videoId) {
   return request(`/api/videos/${videoId}`, { method: "DELETE" });
 }
