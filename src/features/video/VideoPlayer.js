@@ -35,7 +35,6 @@ export default function VideoPlayer() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Deep-link params set by notification clicks
   const shouldScrollToComments =
     searchParams.get("scrollToComments") === "true";
   const shouldAutoplay = searchParams.get("autoplay") === "true";
@@ -44,8 +43,6 @@ export default function VideoPlayer() {
   const thumbBlobRef = useRef(null);
   const commentSectionRef = useRef(null);
 
-  // Phase 6: watch-time tracking
-  // Accumulates seconds watched; flushes to the backend every 30 s and on unmount/pause
   const watchSecondsRef = useRef(0);
   const watchIntervalRef = useRef(null);
 
@@ -72,7 +69,7 @@ export default function VideoPlayer() {
               setThumbnailSrc(blobUrl);
             }
           } catch {
-            /* thumbnail optional */
+
           }
         }
       })
@@ -111,7 +108,6 @@ export default function VideoPlayer() {
     };
   }, []);
 
-  // Phase 6: attach watch-time listeners once the video element is ready
   useEffect(() => {
     const el = videoRef.current;
     if (!el || !videoId) return;
@@ -119,7 +115,6 @@ export default function VideoPlayer() {
     function onPlay() {
       watchIntervalRef.current = setInterval(() => {
         watchSecondsRef.current += 1;
-        // Flush every 30 s while playing
         if (watchSecondsRef.current % 30 === 0) {
           recordWatchTime(videoId, 30).catch(() => {});
         }
@@ -128,7 +123,6 @@ export default function VideoPlayer() {
 
     function onPause() {
       clearInterval(watchIntervalRef.current);
-      // Flush remaining seconds on pause
       const remaining = watchSecondsRef.current % 30;
       if (remaining > 0) recordWatchTime(videoId, remaining).catch(() => {});
     }
@@ -140,7 +134,7 @@ export default function VideoPlayer() {
       el.removeEventListener("play", onPlay);
       el.removeEventListener("pause", onPause);
       clearInterval(watchIntervalRef.current);
-      // Flush on unmount (user navigates away mid-video)
+
       const remaining = watchSecondsRef.current % 30;
       if (remaining > 0) recordWatchTime(videoId, remaining).catch(() => {});
       watchSecondsRef.current = 0;
@@ -257,7 +251,7 @@ export default function VideoPlayer() {
         </Link>
       </div>
 
-      {/* ref on this wrapper so scrollIntoView lands at the right place */}
+
       <div ref={commentSectionRef}>
         <CommentSection
           videoId={videoId}
@@ -265,7 +259,7 @@ export default function VideoPlayer() {
         />
       </div>
 
-      {/* Phase 6: suggested videos based on same category */}
+
       <SuggestedVideos category={video.category} excludeId={videoId} />
     </div>
   );
