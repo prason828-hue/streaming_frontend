@@ -15,7 +15,6 @@ export function WebSocketProvider({ children }) {
   const [onlineUsers, setOnlineUsers] = useState(new Set());
   const [notifications, setNotifications] = useState([]);
   const [unreadNotifCount, setUnreadNotifCount] = useState(0);
-  // Map of username → array of messages (for active chats)
   const [chatMessages, setChatMessages] = useState({});
   const messageHandlersRef = useRef({});
 
@@ -44,7 +43,6 @@ export function WebSocketProvider({ children }) {
           [contact]: [...(prev[contact] || []), msg],
         }));
 
-        // Call any registered per-chat handler (e.g. ChatWindow scroll-to-bottom)
         messageHandlersRef.current[contact]?.(msg);
       },
 
@@ -63,7 +61,7 @@ export function WebSocketProvider({ children }) {
       },
 
       onSeen: (event) => {
-        // Mark messages in that conversation as SEEN
+
         setChatMessages((prev) => {
           const conv = prev[event.seenBy] || [];
           return {
@@ -80,7 +78,7 @@ export function WebSocketProvider({ children }) {
       disconnectWebSocket();
       setConnected(false);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [user]);
 
   function sendMessage(receiverUsername, text) {
