@@ -93,10 +93,6 @@ export default function PublicProfile() {
         <p className="public-profile__about">{profile.about}</p>
       )}
 
-      {/* {profile.dob && (
-        <p className="public-profile__about">Born {profile.dob}</p>
-      )} */}
-
       <div className="public-profile__stats">
         <div>
           <strong>{profile.subscribers ?? 0}</strong>
