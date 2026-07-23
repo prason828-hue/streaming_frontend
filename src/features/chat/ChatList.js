@@ -19,7 +19,6 @@ export default function ChatList() {
       .finally(() => setLoading(false));
   }, []);
 
-  // When a new WS message arrives for a contact not in the list, add them
   useEffect(() => {
     Object.keys(chatMessages).forEach((contact) => {
       setConversations((prev) => {
@@ -50,7 +49,6 @@ export default function ChatList() {
     if (!username) return;
     setNewChatError("");
 
-    // Check the user exists before opening a chat window
     try {
       const { getChatHistory } = await import("./chatApi");
       await getChatHistory(username);
