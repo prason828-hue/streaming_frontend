@@ -14,7 +14,7 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const { connected } = useWebSocket();
   const [showChat, setShowChat] = useState(false);
-  const [activeSection, setActiveSection] = useState("latest"); // "latest" | "trending"
+  const [activeSection, setActiveSection] = useState("latest");
 
   return (
     <div className="dashboard">
@@ -29,7 +29,6 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* Search bar in the centre of the header */}
         <div className="dashboard__search">
           <SearchBar />
         </div>
@@ -77,7 +76,6 @@ export default function Dashboard() {
             showChat ? "dashboard__feed--with-chat" : "dashboard__feed"
           }
         >
-          {/* Section tabs */}
           <div className="dashboard__tabs">
             <button
               className={`dashboard__tab${
