@@ -26,10 +26,6 @@ export default function ProfileEditor() {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
 
-  // Tracks the most recent blob URL we created ourselves (from the saved
-  // profile picture or right after an upload) so we can revoke it before
-  // creating a new one or on unmount. Doesn't track the locally-selected
-  // file preview, which the browser owns independently.
   const ownedBlobUrlRef = useRef(null);
 
   function setOwnedPreview(blobUrl) {
@@ -40,8 +36,6 @@ export default function ProfileEditor() {
     setPreview(blobUrl);
   }
 
-  // Load the existing profile (if any) on mount, so returning users see
-  // their saved details instead of a blank "create" form.
   useEffect(() => {
     let cancelled = false;
 
@@ -79,7 +73,6 @@ export default function ProfileEditor() {
         URL.revokeObjectURL(ownedBlobUrlRef.current);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleChange(e) {
@@ -107,9 +100,6 @@ export default function ProfileEditor() {
     setFile(selected);
     setUploadError("");
     if (selected) {
-      // Locally-selected file preview — this is a browser-owned object URL
-      // pointing at a file already on disk client-side, no network
-      // request involved, so ngrok's interstitial doesn't apply here.
       setPreview(URL.createObjectURL(selected));
     }
   }
