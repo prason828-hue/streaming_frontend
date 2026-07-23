@@ -10,7 +10,6 @@ export default function MessagesPage() {
   const { chatMessages } = useWebSocket();
   const [searchParams] = useSearchParams();
 
-  // ?open=username auto-opens that conversation (set by notification click)
   const [activeChat, setActiveChat] = useState(
     searchParams.get("open") || null
   );
@@ -26,8 +25,6 @@ export default function MessagesPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // If the notification linked to a username not yet in the conversation list,
-  // add a placeholder entry so it appears in the sidebar immediately.
   useEffect(() => {
     const openParam = searchParams.get("open");
     if (!openParam) return;
@@ -41,7 +38,6 @@ export default function MessagesPage() {
     });
   }, [searchParams]);
 
-  // Merge new WS messages into conversation list
   useEffect(() => {
     Object.keys(chatMessages).forEach((contact) => {
       setConversations((prev) => {
