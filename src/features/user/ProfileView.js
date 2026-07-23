@@ -48,7 +48,6 @@ export default function ProfileView() {
         URL.revokeObjectURL(blobUrlRef.current);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
