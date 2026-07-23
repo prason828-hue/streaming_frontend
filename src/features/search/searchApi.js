@@ -1,6 +1,4 @@
 import request from "../../shared/apiClient";
-
-// GET /api/search?q=query — combined results
 export function searchAll(q) {
   return request(`/api/search?q=${encodeURIComponent(q)}`, { method: "GET" });
 }
