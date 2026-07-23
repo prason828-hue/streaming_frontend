@@ -15,16 +15,9 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // On every mount (including page refresh): if a refresh token exists in
-  // localStorage, apiClient will silently use it to get a new access token
-  // the first time /me returns 401. So we just call /me and let apiClient
-  // handle the recovery transparently.
   useEffect(() => {
     let cancelled = false;
 
-    // Only bother calling /me if we have a stored refresh token —
-    // otherwise we know for certain the session is gone and can skip
-    // the network round-trip entirely.
     if (!getRefreshToken()) {
       setLoading(false);
       return;
@@ -35,7 +28,6 @@ export function AuthProvider({ children }) {
         if (!cancelled) setUser(profile);
       })
       .catch(() => {
-        // Refresh token expired / revoked / invalid — session is gone
         if (!cancelled) {
           clearAccessToken();
           clearRefreshToken();
@@ -56,7 +48,6 @@ export function AuthProvider({ children }) {
     try {
       const loginData = await loginUser(credentials);
 
-      // Store both tokens from the response body
       if (loginData?.accessToken) setAccessToken(loginData.accessToken);
       if (loginData?.refreshToken) setRefreshToken(loginData.refreshToken);
 
