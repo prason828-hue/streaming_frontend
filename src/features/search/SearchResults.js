@@ -25,7 +25,6 @@ export default function SearchResults() {
       .finally(() => setLoading(false));
   }, [q]);
 
-  // Load thumbnails for video results
   useEffect(() => {
     results.videos?.forEach((v) => {
       if (!v.thumbnailUrl || thumbMap[v.id]) return;
@@ -33,7 +32,7 @@ export default function SearchResults() {
         .then((url) => setThumbMap((prev) => ({ ...prev, [v.id]: url })))
         .catch(() => {});
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [results.videos]);
 
   const showVideos = activeTab === "all" || activeTab === "videos";
