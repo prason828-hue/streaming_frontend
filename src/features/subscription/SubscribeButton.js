@@ -62,10 +62,6 @@ export default function SubscribeButton({ channelId }) {
 
   if (loading) return null;
 
-  // Label logic:
-  // - Not subscribed → "Subscribe"
-  // - Subscribed + hovering → "Unsubscribe" (red tint so it's obviously destructive)
-  // - Subscribed + not hovering → "Subscribed ✓"
   let label = "Subscribe";
   if (working) {
     label = "…";
