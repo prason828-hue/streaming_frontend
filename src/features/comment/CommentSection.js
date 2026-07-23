@@ -15,8 +15,6 @@ export default function CommentSection({ videoId, highlightOnLoad = false }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [highlightedId, setHighlightedId] = useState(null);
-
-  // Load comments
   useEffect(() => {
     if (!videoId) return;
     let cancelled = false;
@@ -36,25 +34,15 @@ export default function CommentSection({ videoId, highlightOnLoad = false }) {
     };
   }, [videoId]);
 
-  // Effect 1 — when comments load and highlightOnLoad is true,
-  // set the highlighted ID. Use comments.length in deps so this
-  // only runs once when the list first arrives, not on every render.
   useEffect(() => {
     if (!highlightOnLoad || comments.length === 0) return;
 
-    const newestId = comments[0].id; // backend returns newest-first
+    const newestId = comments[0].id;
     setHighlightedId(newestId);
 
-    // Clear the highlight after 2.5 s
     const clearTimer = setTimeout(() => setHighlightedId(null), 2500);
     return () => clearTimeout(clearTimer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [comments.length, highlightOnLoad]);
-
-  // Effect 2 — runs AFTER React has committed the DOM (so newestCommentRef
-  // is guaranteed to be attached). Scrolls to the highlighted comment.
-  // This is why the scroll was unreliable before: we were calling
-  // scrollIntoView inside a setTimeout before the ref existed.
   useEffect(() => {
     if (!highlightedId) return;
     if (!newestCommentRef.current) return;
@@ -142,7 +130,6 @@ export default function CommentSection({ videoId, highlightOnLoad = false }) {
           {comments.map((c, i) => (
             <div
               key={c.id}
-              // Attach ref to the newest (first) comment so Effect 2 can scroll to it
               ref={i === 0 ? newestCommentRef : null}
               className={highlightedId === c.id ? "comment-highlight" : ""}
             >
