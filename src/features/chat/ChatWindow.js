@@ -3,8 +3,6 @@ import { getChatHistory, markSeen } from "../chat/chatApi";
 import { useWebSocket } from "../websocket/WebSocketContext";
 import { useAuth } from "../auth/AuthContext";
 
-// inline=true → renders as a full panel (MessagesPage)
-// inline=false (default) → fixed bottom-right overlay (Dashboard chat bubble)
 export default function ChatWindow({
   contactUsername,
   onClose,
@@ -42,7 +40,6 @@ export default function ChatWindow({
     };
   }, [contactUsername]);
 
-  // Merge WS messages
   useEffect(() => {
     const wsMessages = chatMessages[contactUsername] || [];
     if (wsMessages.length === 0) return;
@@ -53,7 +50,6 @@ export default function ChatWindow({
     });
   }, [chatMessages, contactUsername]);
 
-  // Register live handler
   useEffect(() => {
     const unregister = registerMessageHandler(contactUsername, (msg) => {
       setMessages((prev) => {
@@ -65,7 +61,6 @@ export default function ChatWindow({
     return unregister;
   }, [contactUsername, registerMessageHandler]);
 
-  // Scroll to bottom on new messages
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
